@@ -86,50 +86,6 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, ...props}) => {
                             scale={2.906}
                         />
                     </group>
-                    <group position={[0.303, -1.779, 7.308]} scale={0.139}>
-                        <mesh
-                            castShadow
-                            receiveShadow
-                            geometry={nodes.cloud_0.geometry}
-                            material={materials.Root}
-                            position={[39.977, 41.114, 20.957]}
-                            scale={3.021}
-                        />
-                    </group>
-                    <group
-                        position={[-0.077, -3.699, 6.903]}
-                        rotation={[0, -0.237, -Math.PI]}
-                        scale={0.148}
-                    >
-                        <mesh
-                            castShadow
-                            receiveShadow
-                            geometry={nodes.Cloud_big_0.geometry}
-                            material={materials.Root}
-                            position={[65.232, -1.812, 38.406]}
-                            scale={2.851}
-                        />
-                    </group>
-                    <group position={[3.089, 0.79, 5.662]} scale={0.139}>
-                        <mesh
-                            castShadow
-                            receiveShadow
-                            geometry={nodes.cloud001_0.geometry}
-                            material={materials.Root}
-                            position={[-44.281, 45.418, 24.611]}
-                            scale={2.844}
-                        />
-                    </group>
-                    <group position={[1.99, 0.051, 6.901]} scale={0.131}>
-                        <mesh
-                            castShadow
-                            receiveShadow
-                            geometry={nodes.cloud002_0.geometry}
-                            material={materials.Root}
-                            position={[-47.661, 9.137, 42.154]}
-                            scale={3.867}
-                        />
-                    </group>
                     <group
                         position={[1.968, -1.867, 0.312]}
                         rotation={[0, 0, -1.651]}
@@ -169,9 +125,9 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, ...props}) => {
                         />
                     </group>
                     <group
-                        position={[2.685, -2.091, 0.775]}
+                        position={[5.685, 3, -5]}
                         rotation={[0.025, -0.056, -0.032]}
-                        scale={[0.132, 0.132, 0.16]}
+                        scale={[2*0.132, 2*0.132, 2*0.16]}
                     >
                         <mesh
                             castShadow
@@ -431,13 +387,11 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, ...props}) => {
             <group scale={0.01}>
                 <group rotation={[-Math.PI / 2, 0, 0]} scale={100}>
                     <mesh
-                        
                         receiveShadow
                         geometry={nodes.Island_IslandDirt_0.geometry}
                         material={materials.IslandDirt}
                     />
                     <mesh
-
                         receiveShadow
                         geometry={nodes.Island_IslandGrass_0.geometry}
                         material={materials.IslandGrass}
