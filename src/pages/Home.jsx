@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState, Suspense, useRef, useEffect} from "react";
-import {Canvas} from "@react-three/fiber";
+import {Canvas, useFrame} from "@react-three/fiber";
 import Loader from "../components/Loader.jsx"
 import Island from "../models/island.jsx"
 import { useSpring, animated } from '@react-spring/three'
@@ -12,6 +12,8 @@ import Goose from "../models/Goose.jsx"
 import Space_Boi from "../models/space_boi.jsx"
 import Tanuki from "../models/Tanuki.jsx"
 import Birds from "../models/Birds.jsx"
+import * as THREE from 'three';
+import "./HomeInfo.css"
 // import skyTexture from
 
 
@@ -23,7 +25,44 @@ const Home = () => {
     const prevAzimuthalAngle = useRef(0);
     const [orbitDirection, setOrbitDirection] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
+    const [showMoveButton, setShowMoveButton] = useState(false);
+    const [cameraMoved, setCameraMoved] = useState(false);
 
+    const updateOrbitControlsTarget = (target) => {
+        if (orbitControlsRef.current) {
+            const currentTarget = orbitControlsRef.current.target;
+            const step = 0.02; // Adjust the step size based on your preference
+
+            const interval = setInterval(() => {
+                const diff = new THREE.Vector3().subVectors(target, currentTarget);
+                const distance = diff.length();
+
+                if (distance < step) {
+                    orbitControlsRef.current.target.copy(target);
+                    orbitControlsRef.current.update();
+                    clearInterval(interval);
+                } else {
+                    diff.normalize().multiplyScalar(step);
+                    currentTarget.add(diff);
+                    orbitControlsRef.current.update();
+                }
+            }, 1); // 60 frames per second
+        }
+    };
+
+    const handleMoveButtonClick = () => {
+        // Trigger camera movement or any other actions you need
+        const newTarget = new THREE.Vector3(20, 0, 0); // Set your new target coordinates
+        updateOrbitControlsTarget(newTarget);
+        setTimeout(() => {
+            setCameraMoved(true);
+        }, 2000);
+    };
+
+    useEffect(() => {
+        // Check if the currentStage is 1 and show the button
+        setShowMoveButton(currentStage === 1);
+    }, [currentStage]);
 
 
     const adjustIslandForScreen = () => {
@@ -60,8 +99,11 @@ const Home = () => {
 
     useEffect(() => {
         console.log("Current Stage:", currentStage);
-    }, [currentStage]);
+        if (orbitControlsRef.current){
+            console.log("current pos:", orbitControlsRef.current.target)
+        }
 
+    }, [currentStage]);
 
 
     const [islandScale, islandPos, rot] = adjustIslandForScreen();
@@ -69,11 +111,24 @@ const Home = () => {
     const [playerPosition, setPlayerPosition] = useState([0, 1, 0]);
     const [playerRotation, setPlayerRotation] = useState([0,0,0]);
 
+
     return(
         <section className="w-full h-screen relative" >
-            <div className="absolute top-28 left-0 right-0 z-10 flex items-center justify-center text-white" style={{ userSelect: 'none' }}>
-                {currentStage && <HomeInfo currentStage={currentStage}/> }
+            <div className="absolute top-4 left-4 z-20">
+                {showMoveButton && (
+                    <button
+                        onClick={handleMoveButtonClick}
+                        className="bg-blue-500 text-white p-2 rounded"
+                    >
+                        Move Camera
+                    </button>
+                )}
             </div>
+            {cameraMoved && (
+                <div className="home-info-content" style={{ userSelect: 'none' }}>
+                    {currentStage && <HomeInfo currentStage={1} />}
+                </div>
+            )}
             <Canvas
                 className={`w-full h-screen bg-transparent
                 ${isRotating ? 'cursor-grabbing' : 'cursor-grab'}`}
@@ -81,11 +136,11 @@ const Home = () => {
                 shadows
             >
                 <Suspense fallback={<Loader/>}>
-                    <directionalLight castShadow position={[0, 10, 20]} shadow-mapSize={[1024, 1024]} shadow-bias={-0.0001} intensity={15}>
+                    <directionalLight castShadow position={[0, 10, 20]} shadow-mapSize={[1024, 1024]} shadow-bias={-0.0001} intensity={0.8}>
                            <orthographicCamera attach="shadow-camera" args={[-20, 20, 20, -20]} />
                     </directionalLight>
                     <ambientLight intensity={1}/>
-                    <hemisphereLight skyColor="#b1e1ff" groundColor="#000000" intensity={8}/>
+                    <hemisphereLight skyColor="#b1e1ff" groundColor="#000000" intensity={0}/>
 
                     {/*<Tanuki/>*/}
                     {/*<Goose />*/}
@@ -112,7 +167,7 @@ const Home = () => {
                     />
                 </Suspense>
                 <OrbitControls
-                    ref={orbitControlsRef}
+                    ref={(controls) => (orbitControlsRef.current = controls)}
                     target={[islandPos[0],islandPos[1],islandPos[2]]}
                     minDistance={25}  // Set your desired minimum distance
                     maxDistance={60}

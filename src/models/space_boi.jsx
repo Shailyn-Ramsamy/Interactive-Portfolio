@@ -7,7 +7,7 @@ const Space_Boi = () => {
     const spRef = useRef();
 
     return (
-        <mesh ref={spRef} position={[-80,-60,-100]} scale={[20, 20, 20]} castShadow receiveShadow>
+        <mesh ref={spRef} position={[-60,-100,-80]} scale={[20, 20, 20]} castShadow receiveShadow>
             <primitive object={scene} />
         </mesh>
     );

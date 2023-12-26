@@ -1,0 +1,16 @@
+.home-info-content {
+    position: absolute;
+    top: 50%;
+    left: 70%;
+    transform: translate(-50%, -50%);
+    opacity: 1;
+    background-color: aliceblue;
+    transition: opacity 2s ease-in-out, transform 2s ease-in-out;
+    z-index: 1000;
+    border-radius: 5px;
+}
+
+.home-info-content.show {
+    opacity: 1;
+    transform: translate(-40%, -50%); /* Adjust the percentage as needed */
+}

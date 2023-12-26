@@ -70,6 +70,7 @@ const Player = ({isRotating ,playerScale, playerPos, rotation, playerPosition, o
     });
 
 
+
     return (
         <mesh ref={playerRef} scale={playerScale} position={playerPosition} rotation={rotation} castShadow receiveShadow>
             <primitive object={scene} />
