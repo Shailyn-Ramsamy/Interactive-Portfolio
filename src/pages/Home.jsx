@@ -27,41 +27,73 @@ const Home = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [showMoveButton, setShowMoveButton] = useState(false);
     const [cameraMoved, setCameraMoved] = useState(false);
+    const [prevCurrentStage, setPrevCurrentStage] = useState(null); // New state variable
+
+    const infoContentStyles = {
+        1: { top: '50%', left: '70%', transform: 'translate(-50%, -50%)' },
+        2: { top: '50%', left: '20%' },
+        3: { top: '30%', left: '20%' },
+        4: { top: '50%', left: '70%' },
+        // Add more styles for other stages as needed
+    };
 
     const updateOrbitControlsTarget = (target) => {
         if (orbitControlsRef.current) {
             const currentTarget = orbitControlsRef.current.target;
-            const step = 0.02; // Adjust the step size based on your preference
+            const initialDistance = currentTarget.distanceTo(target);
+            let distance = initialDistance;
 
-            const interval = setInterval(() => {
+            const dampingFactor = 0.98; // Adjust the damping factor based on your preference
+            const minDistance = 0.1; // Minimum distance to consider the animation complete
+
+            const animate = () => {
                 const diff = new THREE.Vector3().subVectors(target, currentTarget);
-                const distance = diff.length();
+                distance = diff.length();
 
-                if (distance < step) {
+                if (distance < minDistance) {
+                    // Stop the animation when close enough
                     orbitControlsRef.current.target.copy(target);
                     orbitControlsRef.current.update();
-                    clearInterval(interval);
                 } else {
-                    diff.normalize().multiplyScalar(step);
+                    diff.normalize().multiplyScalar(distance * (1 - dampingFactor));
                     currentTarget.add(diff);
                     orbitControlsRef.current.update();
+                    requestAnimationFrame(animate);
                 }
-            }, 1); // 60 frames per second
+            };
+
+            // Start the animation
+            animate();
+        }
+    };
+
+    const stageTargets = {
+        1: new THREE.Vector3(20, 10, 0), // Example target for stage 1
+        2: new THREE.Vector3(0, 0, 20),
+        3: new THREE.Vector3(20, 0, 0),
+        4: new THREE.Vector3(-20, 0, 0),
+    };
+
+    const updateTargetForStage = (stage) => {
+        const newTarget = stageTargets[stage];
+        if (newTarget) {
+            updateOrbitControlsTarget(newTarget);
         }
     };
 
     const handleMoveButtonClick = () => {
         // Trigger camera movement or any other actions you need
-        const newTarget = new THREE.Vector3(20, 0, 0); // Set your new target coordinates
-        updateOrbitControlsTarget(newTarget);
+        updateTargetForStage(currentStage);
+        setPrevCurrentStage(currentStage);
         setTimeout(() => {
+            console.log("camba");
             setCameraMoved(true);
         }, 2000);
     };
 
     useEffect(() => {
         // Check if the currentStage is 1 and show the button
-        setShowMoveButton(currentStage === 1);
+        setShowMoveButton(currentStage != 5);
     }, [currentStage]);
 
 
@@ -125,8 +157,14 @@ const Home = () => {
                 )}
             </div>
             {cameraMoved && (
-                <div className="home-info-content" style={{ userSelect: 'none' }}>
-                    {currentStage && <HomeInfo currentStage={1} />}
+                <div
+                    className="home-info-content"
+                    style={{
+                        userSelect: 'none',
+                        ...infoContentStyles[prevCurrentStage], // Apply style based on currentStage
+                    }}
+                >
+                    {currentStage && <HomeInfo currentStage={prevCurrentStage} />}
                 </div>
             )}
             <Canvas
