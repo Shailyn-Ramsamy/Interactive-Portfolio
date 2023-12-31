@@ -5,3 +5,26 @@
     transform: translate(-50%, -50%);
     opacity: 1;
 }
+
+.card {
+    background: white;
+    padding: 2rem 3rem;
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.card p{
+    padding-top: 1rem;
+    line-height: 150%;
+}
+
+.example-container .drag-area {
+    opacity: 0.2;
+    background: white;
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 30px;
+    top: calc(50% - 150px);
+    left: calc(50% - 150px);
+}

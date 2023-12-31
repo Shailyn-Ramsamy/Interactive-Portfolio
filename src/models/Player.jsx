@@ -14,7 +14,6 @@ const Player = ({isRotating ,playerScale, playerPos, rotation, playerPosition, o
 
     useEffect(() => {
         const action = actions['ArmatureAction.001'];
-        console.log(animations);
         action.play()
     }, [actions, isRotating]);
 

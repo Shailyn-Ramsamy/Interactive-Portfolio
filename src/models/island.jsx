@@ -2,18 +2,19 @@ import { useRef, useEffect, useState } from "react";
 import { useGLTF, useAnimations, OrbitControls } from "@react-three/drei";
 import {useFrame, useThree} from '@react-three/fiber'
 import {a} from '@react-spring/three'
+import { MeshStandardMaterial } from 'three';
+import islandScene from '../assets/3d/planetAnim.glb'
+import * as THREE from 'three';
 
-import islandScene from '../assets/3d/Planet.glb'
-
-const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}) => {
+const Island = ({isRotating, setIsRotating, islandPos, currentStage,...props}) => {
     const islandRef = useRef();
 
     const {gl, viewport} = useThree();
-
-
+    const [count, setCount] = useState(0);
+    const [animationPlayed, setAnimationPlayed] = useState(false);
     const group = useRef();
     const { nodes, materials, animations } = useGLTF(islandScene);
-    const { actions } = useAnimations(animations, group);
+    const { actions, mixer } = useAnimations(animations, islandRef);
 
     const [floatingPosition, setFloatingPosition] = useState([0, 0, 0]);
     const floatingAmplitude = 0.5; // Adjust the floating height
@@ -35,15 +36,189 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
         islandRef.current.position.set(...floatingPosition);
     });
 
+
+    useEffect(() => {
+        const action2 = actions['Icosphere.453Action.002'];
+        const action3 = actions['Icosphere.453Action.001'];
+        const action4 = actions['Icosphere.453Action.003'];
+        const action1 = actions['Icosphere.453Action.005'];
+
+        const handleAnimationFinish = () => {
+            console.log("Animation finished");
+            // Do something when the animation finishes
+        };
+
+        if (action1) {
+            if (currentStage === 1) {
+
+                action1.reset();
+
+                if (action1.clampWhenFinished){
+                    console.log("yes");
+                }
+
+                // If animation is not playing, or is playing in reverse, play it forward
+                if (!animationPlayed || action1.timeScale < 0) {
+                    action1.setLoop(THREE.LoopOnce, 1);
+                    action1.clampWhenFinished = true;
+                    action1.setEffectiveTimeScale(2.5);
+                    // Set the animationPlayed state to true when played forward initially
+                    setAnimationPlayed(true);
+                }
+            } else if (currentStage !== 1 && animationPlayed) {
+                // Play in reverse with a negative time scale
+                action1.setLoop(THREE.LoopOnce, 1);
+                action1.clampWhenFinished = true;
+                action1.setEffectiveTimeScale(-8);
+                action1.play();
+            }
+
+
+        }
+
+        if (action2) {
+            if (currentStage === 2) {
+                action2.reset();
+                // If animation is not playing, or is playing in reverse, play it forward
+                if (!animationPlayed || action2.timeScale < 0) {
+                    action2.setLoop(THREE.LoopOnce, 1);
+                    action2.clampWhenFinished = true;
+                    action2.setEffectiveTimeScale(2.5);
+                    action2.play();
+
+                    // Set the animationPlayed state to true when played forward initially
+                    setAnimationPlayed(true);
+                }
+            } else if (currentStage !== 2 && animationPlayed) {
+                // Play in reverse with a negative time scale
+                action2.setLoop(THREE.LoopOnce, 1);
+                action2.clampWhenFinished = true;
+                action2.setEffectiveTimeScale(-8);
+                action2.play();
+            }
+        }
+
+        if (action3) {
+            if (currentStage === 3) {
+                action3.reset();
+                // If animation is not playing, or is playing in reverse, play it forward
+                if (!animationPlayed || action3.timeScale < 0) {
+                    action3.setLoop(THREE.LoopOnce, 1);
+                    action3.clampWhenFinished = true;
+                    action3.setEffectiveTimeScale(2.5);
+                    action3.play();
+
+                    // Set the animationPlayed state to true when played forward initially
+                    setAnimationPlayed(true);
+                }
+            } else if (currentStage !== 3 && animationPlayed) {
+                // Play in reverse with a negative time scale
+                action3.setLoop(THREE.LoopOnce, 1);
+                action3.clampWhenFinished = true;
+                action3.setEffectiveTimeScale(-8);
+                action3.play();
+            }
+        }
+
+        if (action4) {
+            if (currentStage === 4) {
+                action4.reset();
+                // If animation is not playing, or is playing in reverse, play it forward
+                if (!animationPlayed || action4.timeScale < 0) {
+                    action4.setLoop(THREE.LoopOnce, 1);
+                    action4.clampWhenFinished = true;
+                    action4.setEffectiveTimeScale(2.5);
+                    action4.play();
+
+                    // Set the animationPlayed state to true when played forward initially
+                    setAnimationPlayed(true);
+                }
+            } else if (currentStage !== 4 && animationPlayed) {
+                // Play in reverse with a negative time scale
+                action4.setLoop(THREE.LoopOnce, 1);
+                action4.clampWhenFinished = true;
+                action4.setEffectiveTimeScale(-8);
+                action4.play();
+            }
+        }
+    }, [actions, mixer, currentStage, animationPlayed]);
+
+
+
+
+
+
+
+
+    useFrame(() => {
+        // Update the animation mixer
+        mixer.update(0.016); // Pass delta time to update the mixer
+    });
+
     return (
         <a.group ref={islandRef} {...props}>
+            <group name="Scene">
+                <group
+                    name="Sketchfab_model002"
+                    position={[4.513, -2.288, 35.25]}
+                    rotation={[-1.546, 0, -1.616]}
+                    scale={0.642}
+                >
+                    <group name="Root001">
+                        <group
+                            name="stones001"
+                            position={[0.772, -0.115, 0.193]}
+                            rotation={[0, 0, -0.796]}
+                            scale={[0.121, 0.07, 0.031]}
+                        />
+                    </group>
+                </group>
+                <group
+                    name="Sketchfab_model003"
+                    position={[38.849, 1.519, -3.074]}
+                    rotation={[-Math.PI / 2, 0, 0]}
+                >
+                    <group name="Root002" />
+                </group>
+                <group
+                    name="Sketchfab_model001"
+                    position={[-7.341, -2.704, -9.221]}
+                    rotation={[-Math.PI / 2, 0, 0]}
+                >
+                    <group name="Root003" />
+                </group>
+                <group
+                    name="Sketchfab_model004"
+                    position={[-18.444, -2.337, 3.144]}
+                    rotation={[-Math.PI / 2, 0, -0.556]}
+                >
+                    <group name="Root004" />
+                </group>
+                <group name="Icosphere">
+                    <mesh
+                        name="Icosphere_1"
+                        castShadow
+                        receiveShadow
+                        geometry={nodes.Icosphere_1.geometry}
+                        material={materials["Material.002"]}
+                    />
+                    <mesh
+                        name="Icosphere_2"
+                        castShadow
+                        receiveShadow
+                        geometry={nodes.Icosphere_2.geometry}
+                        material={materials["Material.011"]}
+                    />
+                </group>
                 <mesh
+                    name="Icosphere001"
                     castShadow
                     receiveShadow
                     geometry={nodes.Icosphere001.geometry}
                     material={materials["Material.003"]}
                 />
                 <mesh
+                    name="Plane"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane.geometry}
@@ -53,6 +228,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.069}
                 />
                 <mesh
+                    name="Plane002"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane002.geometry}
@@ -62,6 +238,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.105}
                 />
                 <mesh
+                    name="Plane004"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane004.geometry}
@@ -71,6 +248,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.062}
                 />
                 <mesh
+                    name="Plane005"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane005.geometry}
@@ -80,6 +258,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.086}
                 />
                 <mesh
+                    name="Plane006"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane006.geometry}
@@ -89,6 +268,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.093}
                 />
                 <mesh
+                    name="Plane007"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane007.geometry}
@@ -98,6 +278,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.091}
                 />
                 <mesh
+                    name="Plane008"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane008.geometry}
@@ -107,6 +288,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.096}
                 />
                 <mesh
+                    name="Plane009"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane009.geometry}
@@ -116,6 +298,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.085}
                 />
                 <mesh
+                    name="Plane010"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane010.geometry}
@@ -125,6 +308,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.081}
                 />
                 <mesh
+                    name="Plane011"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane011.geometry}
@@ -134,6 +318,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.097}
                 />
                 <mesh
+                    name="Plane012"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane012.geometry}
@@ -143,6 +328,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.094}
                 />
                 <mesh
+                    name="Plane013"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane013.geometry}
@@ -152,6 +338,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.083}
                 />
                 <mesh
+                    name="Plane014"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane014.geometry}
@@ -161,6 +348,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.071}
                 />
                 <mesh
+                    name="Plane015"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane015.geometry}
@@ -170,6 +358,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.083}
                 />
                 <mesh
+                    name="Plane016"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane016.geometry}
@@ -179,6 +368,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.078}
                 />
                 <mesh
+                    name="Plane017"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane017.geometry}
@@ -188,6 +378,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.065}
                 />
                 <mesh
+                    name="Plane018"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane018.geometry}
@@ -197,6 +388,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.056}
                 />
                 <mesh
+                    name="Plane019"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane019.geometry}
@@ -206,6 +398,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.093}
                 />
                 <mesh
+                    name="Plane020"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane020.geometry}
@@ -215,15 +408,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.08}
                 />
                 <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Plane021.geometry}
-                    material={materials["Material.004"]}
-                    position={[0.053, 0.221, -1.059]}
-                    rotation={[1.748, 1.176, -0.004]}
-                    scale={-0.113}
-                />
-                <mesh
+                    name="Plane022"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane022.geometry}
@@ -233,6 +418,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.067}
                 />
                 <mesh
+                    name="Plane023"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane023.geometry}
@@ -242,6 +428,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.098}
                 />
                 <mesh
+                    name="Plane024"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane024.geometry}
@@ -251,6 +438,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.102}
                 />
                 <mesh
+                    name="Plane025"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane025.geometry}
@@ -260,6 +448,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.087}
                 />
                 <mesh
+                    name="Plane026"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane026.geometry}
@@ -269,6 +458,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.075}
                 />
                 <mesh
+                    name="Plane027"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane027.geometry}
@@ -278,6 +468,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.056}
                 />
                 <mesh
+                    name="Plane028"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane028.geometry}
@@ -287,6 +478,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.082}
                 />
                 <mesh
+                    name="Plane029"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane029.geometry}
@@ -296,6 +488,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.081}
                 />
                 <mesh
+                    name="Plane030"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane030.geometry}
@@ -305,6 +498,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.071}
                 />
                 <mesh
+                    name="Plane031"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane031.geometry}
@@ -314,6 +508,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.074}
                 />
                 <mesh
+                    name="Plane032"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane032.geometry}
@@ -323,6 +518,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.11}
                 />
                 <mesh
+                    name="Plane033"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane033.geometry}
@@ -332,6 +528,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.093}
                 />
                 <mesh
+                    name="Plane034"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane034.geometry}
@@ -341,6 +538,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.077}
                 />
                 <mesh
+                    name="Plane035"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane035.geometry}
@@ -350,6 +548,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.107}
                 />
                 <mesh
+                    name="Plane036"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane036.geometry}
@@ -359,6 +558,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.153}
                 />
                 <mesh
+                    name="Plane037"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane037.geometry}
@@ -368,6 +568,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.153}
                 />
                 <mesh
+                    name="Plane038"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane038.geometry}
@@ -377,6 +578,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.081}
                 />
                 <mesh
+                    name="Plane039"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane039.geometry}
@@ -386,6 +588,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.091}
                 />
                 <mesh
+                    name="Plane040"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane040.geometry}
@@ -395,6 +598,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.053}
                 />
                 <mesh
+                    name="Plane041"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane041.geometry}
@@ -404,6 +608,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.092}
                 />
                 <mesh
+                    name="Plane042"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane042.geometry}
@@ -413,6 +618,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.098}
                 />
                 <mesh
+                    name="Plane043"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane043.geometry}
@@ -422,6 +628,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.111}
                 />
                 <mesh
+                    name="Plane044"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane044.geometry}
@@ -431,6 +638,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.087}
                 />
                 <mesh
+                    name="Plane045"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane045.geometry}
@@ -440,6 +648,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.086}
                 />
                 <mesh
+                    name="Plane046"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane046.geometry}
@@ -449,6 +658,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.123}
                 />
                 <mesh
+                    name="Plane047"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane047.geometry}
@@ -458,6 +668,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.095}
                 />
                 <mesh
+                    name="Plane048"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane048.geometry}
@@ -467,15 +678,17 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.139}
                 />
                 <mesh
+                    name="Plane050"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane050.geometry}
                     material={materials["Material.005"]}
-                    position={[-0.038, -0.524, 0.956]}
+                    position={[-0.154, -0.517, 0.947]}
                     rotation={[2.292, -0.624, 0.206]}
                     scale={[-0.064, -0.046, -0.046]}
                 />
                 <mesh
+                    name="Plane051"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane051.geometry}
@@ -485,6 +698,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[-0.04, -0.029, -0.029]}
                 />
                 <mesh
+                    name="Plane052"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane052.geometry}
@@ -494,6 +708,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[0.041, 0.029, 0.029]}
                 />
                 <mesh
+                    name="Plane053"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane053.geometry}
@@ -503,6 +718,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[0.039, 0.028, 0.028]}
                 />
                 <mesh
+                    name="Plane054"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane054.geometry}
@@ -512,6 +728,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[-0.054, -0.038, -0.038]}
                 />
                 <mesh
+                    name="Plane055"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane055.geometry}
@@ -521,6 +738,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[-0.053, -0.037, -0.037]}
                 />
                 <mesh
+                    name="Plane056"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane056.geometry}
@@ -530,6 +748,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[-0.029, -0.02, -0.02]}
                 />
                 <mesh
+                    name="Plane057"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane057.geometry}
@@ -539,6 +758,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[0.028, 0.02, 0.02]}
                 />
                 <mesh
+                    name="Plane058"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane058.geometry}
@@ -548,6 +768,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[0.024, 0.017, 0.017]}
                 />
                 <mesh
+                    name="Plane059"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane059.geometry}
@@ -557,6 +778,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[0.026, 0.018, 0.018]}
                 />
                 <mesh
+                    name="Plane060"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane060.geometry}
@@ -566,6 +788,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[0.029, 0.021, 0.021]}
                 />
                 <mesh
+                    name="Plane061"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane061.geometry}
@@ -575,6 +798,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[0.022, 0.016, 0.016]}
                 />
                 <mesh
+                    name="Plane062"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane062.geometry}
@@ -584,6 +808,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[0.027, 0.019, 0.019]}
                 />
                 <mesh
+                    name="Plane063"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane063.geometry}
@@ -593,6 +818,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[0.028, 0.02, 0.02]}
                 />
                 <mesh
+                    name="Plane064"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane064.geometry}
@@ -602,6 +828,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.071}
                 />
                 <mesh
+                    name="Plane065"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane065.geometry}
@@ -611,6 +838,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.071}
                 />
                 <mesh
+                    name="Plane066"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane066.geometry}
@@ -620,6 +848,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.071}
                 />
                 <mesh
+                    name="Plane067"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane067.geometry}
@@ -629,6 +858,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.074}
                 />
                 <mesh
+                    name="Plane068"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane068.geometry}
@@ -638,6 +868,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[-0.052, -0.037, -0.037]}
                 />
                 <mesh
+                    name="Plane069"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane069.geometry}
@@ -647,6 +878,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[0.034, 0.024, 0.024]}
                 />
                 <mesh
+                    name="Plane070"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane070.geometry}
@@ -656,6 +888,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[-0.037, -0.026, -0.026]}
                 />
                 <mesh
+                    name="Plane071"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane071.geometry}
@@ -665,6 +898,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[0.037, 0.026, 0.026]}
                 />
                 <mesh
+                    name="Plane072"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane072.geometry}
@@ -674,6 +908,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[-0.037, -0.026, -0.026]}
                 />
                 <mesh
+                    name="Plane073"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane073.geometry}
@@ -683,6 +918,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.049}
                 />
                 <mesh
+                    name="Plane074"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane074.geometry}
@@ -692,6 +928,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.073}
                 />
                 <mesh
+                    name="Plane075"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane075.geometry}
@@ -701,6 +938,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.055}
                 />
                 <mesh
+                    name="Plane076"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane076.geometry}
@@ -710,6 +948,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={-0.064}
                 />
                 <mesh
+                    name="Plane077"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane077.geometry}
@@ -719,6 +958,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[-0.032, -0.023, -0.023]}
                 />
                 <mesh
+                    name="Plane078"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane078.geometry}
@@ -728,6 +968,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[0.036, 0.026, 0.026]}
                 />
                 <mesh
+                    name="Plane079"
                     castShadow
                     receiveShadow
                     geometry={nodes.Plane079.geometry}
@@ -737,42 +978,49 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={[-0.03, -0.021, -0.021]}
                 />
                 <group
+                    name="Plane080"
                     position={[0.754, -0.611, 0.424]}
                     rotation={[-0.26, 0.012, 0.91]}
                     scale={-0.01}
                 >
-                        <mesh
-                            castShadow
-                            receiveShadow
-                            geometry={nodes.Plane004_1.geometry}
-                            material={materials["Material.006"]}
-                        />
-                        <mesh
-                            castShadow
-                            receiveShadow
-                            geometry={nodes.Plane004_2.geometry}
-                            material={materials["Material.007"]}
-                        />
+                    <mesh
+                        name="Plane004_1"
+                        castShadow
+                        receiveShadow
+                        geometry={nodes.Plane004_1.geometry}
+                        material={materials["Material.006"]}
+                    />
+                    <mesh
+                        name="Plane004_2"
+                        castShadow
+                        receiveShadow
+                        geometry={nodes.Plane004_2.geometry}
+                        material={materials["Material.007"]}
+                    />
                 </group>
                 <group
+                    name="Plane081"
                     position={[-0.718, 0.658, 0.374]}
                     rotation={[0.365, 0.081, -2.352]}
                     scale={-0.013}
                 >
-                        <mesh
-                            castShadow
-                            receiveShadow
-                            geometry={nodes.Plane004_1.geometry}
-                            material={materials["Material.006"]}
-                        />
-                        <mesh
-                            castShadow
-                            receiveShadow
-                            geometry={nodes.Plane004_2.geometry}
-                            material={materials["Material.007"]}
-                        />
+                    <mesh
+                        name="Plane004_1"
+                        castShadow
+                        receiveShadow
+                        geometry={nodes.Plane004_1.geometry}
+                        material={materials["Material.006"]}
+                    />
+                    <mesh
+                        name="Plane004_2"
+                        castShadow
+                        receiveShadow
+                        geometry={nodes.Plane004_2.geometry}
+                        material={materials["Material.007"]}
+                    />
                 </group>
                 <mesh
+                    name="Icosphere002"
                     castShadow
                     receiveShadow
                     geometry={nodes.Icosphere002.geometry}
@@ -782,6 +1030,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={0.08}
                 />
                 <mesh
+                    name="Icosphere003"
                     castShadow
                     receiveShadow
                     geometry={nodes.Icosphere003.geometry}
@@ -791,6 +1040,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={0.08}
                 />
                 <mesh
+                    name="Icosphere004"
                     castShadow
                     receiveShadow
                     geometry={nodes.Icosphere004.geometry}
@@ -800,6 +1050,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={0.08}
                 />
                 <mesh
+                    name="Icosphere005"
                     castShadow
                     receiveShadow
                     geometry={nodes.Icosphere005.geometry}
@@ -809,6 +1060,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={0.08}
                 />
                 <mesh
+                    name="Icosphere006"
                     castShadow
                     receiveShadow
                     geometry={nodes.Icosphere006.geometry}
@@ -818,6 +1070,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={0.08}
                 />
                 <mesh
+                    name="Icosphere007"
                     castShadow
                     receiveShadow
                     geometry={nodes.Icosphere007.geometry}
@@ -827,6 +1080,7 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={0.08}
                 />
                 <mesh
+                    name="Icosphere008"
                     castShadow
                     receiveShadow
                     geometry={nodes.Icosphere008.geometry}
@@ -836,17 +1090,45 @@ const Island = ({isRotating, setIsRotating, setCurrentStage, islandPos,...props}
                     scale={0.08}
                 />
                 <mesh
+                    name="Icosphere453"
                     castShadow
                     receiveShadow
-                    geometry={nodes.Icosphere_1.geometry}
-                    material={materials["Material.002"]}
+                    geometry={nodes.Icosphere453.geometry}
+                    material={materials["Material.012"]}
+                    position={[1.097, 0, 0.003]}
+                    scale={0.814}
                 />
                 <mesh
+                    name="Icosphere451"
                     castShadow
                     receiveShadow
-                    geometry={nodes.Icosphere_2.geometry}
-                    material={materials["Material.011"]}
+                    geometry={nodes.Icosphere451.geometry}
+                    material={materials["Material.014"]}
+                    position={[0, 0, -1.118]}
+                    rotation={[-2.283, -1.501, 0.888]}
+                    scale={0.814}
                 />
+                <mesh
+                    name="Icosphere009"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Icosphere009.geometry}
+                    material={materials["Material.018"]}
+                    position={[-0.032, -0.552, 0.966]}
+                    rotation={[-1.22, -1.49, -1.738]}
+                    scale={0.814}
+                />
+                <mesh
+                    name="Icosphere010"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Icosphere010.geometry}
+                    material={materials["Material.020"]}
+                    position={[-0.147, 0.955, -0.456]}
+                    rotation={[-2.967, 1.154, -2.249]}
+                    scale={0.814}
+                />
+            </group>
             {/*<group position={[0.182, 0.02, -0.026]}>*/}
             {/*    <mesh*/}
             {/*        castShadow*/}

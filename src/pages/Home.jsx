@@ -20,7 +20,7 @@ import "./HomeInfo.css"
 const Home = () => {
 
     const [isRotating, setIsRotating] = useState(false);
-    const [currentStage, setCurrentStage] = useState(null);
+    const [currentStage, setCurrentStage] = useState(1);
     const orbitControlsRef = useRef();
     const prevAzimuthalAngle = useRef(0);
     const [orbitDirection, setOrbitDirection] = useState(null);
@@ -28,11 +28,42 @@ const Home = () => {
     const [showMoveButton, setShowMoveButton] = useState(false);
     const [cameraMoved, setCameraMoved] = useState(false);
     const [prevCurrentStage, setPrevCurrentStage] = useState(null); // New state variable
+    const [allowOrbitControls, setAllowOrbitControls] = useState(true);
+
+    const [timer, setTimer] = useState(0);
+
+    const prevTimerRef = useRef(0);
+
+    useEffect(() => {
+        let interval;
+
+        if (currentStage === 2) {
+            // If currentStage is 2, increase the timer up to 5000 milliseconds (5 seconds)
+            interval = setInterval(() => {
+                setTimer((prevTimer) => {
+                    // Access the previous timer value using the ref
+                    prevTimerRef.current = prevTimer;
+                    return prevTimer < 2000 ? prevTimer + 100 : prevTimer;
+                });
+
+                if (prevTimerRef.current == 1900) {
+                    // Execute a function when the timer is close to 5000 milliseconds
+                    handleMoveButtonClick();
+                }
+            }, 100);
+        } else {
+            // If currentStage is not 2, set the timer to 0
+            setTimer(0);
+        }
+
+        return () => clearInterval(interval); // Clear interval on component unmount
+
+    }, [currentStage]);
 
     const infoContentStyles = {
         1: { top: '50%', left: '70%', transform: 'translate(-50%, -50%)' },
-        2: { top: '50%', left: '20%' },
-        3: { top: '30%', left: '20%' },
+        2: { top: '50%', left: '30%' },
+        3: { top: '30%', left: '30%' },
         4: { top: '50%', left: '70%' },
         // Add more styles for other stages as needed
     };
@@ -83,12 +114,15 @@ const Home = () => {
 
     const handleMoveButtonClick = () => {
         // Trigger camera movement or any other actions you need
+        setAllowOrbitControls(false);
         updateTargetForStage(currentStage);
         setPrevCurrentStage(currentStage);
         setTimeout(() => {
             console.log("camba");
             setCameraMoved(true);
-        }, 2000);
+
+        }, 1000);
+
     };
 
     useEffect(() => {
@@ -146,27 +180,20 @@ const Home = () => {
 
     return(
         <section className="w-full h-screen relative" >
-            <div className="absolute top-4 left-4 z-20">
-                {showMoveButton && (
-                    <button
-                        onClick={handleMoveButtonClick}
-                        className="bg-blue-500 text-white p-2 rounded"
+            <div>
+                {cameraMoved && (
+                    <div
+                        className="home-info-content z-20"
+                        style={{
+                            userSelect: 'none',
+                            ...infoContentStyles[prevCurrentStage], // Apply style based on currentStage
+                        }}
                     >
-                        Move Camera
-                    </button>
+                        {currentStage && <HomeInfo currentStage={prevCurrentStage} />}
+                    </div>
                 )}
             </div>
-            {cameraMoved && (
-                <div
-                    className="home-info-content"
-                    style={{
-                        userSelect: 'none',
-                        ...infoContentStyles[prevCurrentStage], // Apply style based on currentStage
-                    }}
-                >
-                    {currentStage && <HomeInfo currentStage={prevCurrentStage} />}
-                </div>
-            )}
+
             <Canvas
                 className={`w-full h-screen bg-transparent
                 ${isRotating ? 'cursor-grabbing' : 'cursor-grab'}`}
@@ -190,6 +217,7 @@ const Home = () => {
                         position={islandPos}
                         scale={islandScale}
                         rotation={rot}
+                        currentStage={currentStage}
                         setCurrentStage={setCurrentStage}
                     />
                     <Player
@@ -209,6 +237,7 @@ const Home = () => {
                     target={[islandPos[0],islandPos[1],islandPos[2]]}
                     minDistance={25}  // Set your desired minimum distance
                     maxDistance={60}
+                    enabled={allowOrbitControls}
                     onStart={() => setIsRotating(true)}
                     onEnd={() => setIsRotating(false)}
                 />
