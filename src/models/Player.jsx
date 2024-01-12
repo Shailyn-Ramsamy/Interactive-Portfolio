@@ -6,7 +6,7 @@ import { MathUtils } from 'three';
 import * as THREE from 'three';
 
 
-const Player = ({isRotating ,playerScale, playerPos, rotation, playerPosition, orbitDirection, orbitControlsRef, setCurrentStage,...props }) => {
+const Player = ({isRotating ,playerScale, playerPos, rotation, playerPosition, orbitDirection, orbitControlsRef, setCurrentStage,isCoolDown,...props }) => {
     const { scene, animations } = useGLTF(playerScene);
     const playerRef = useRef();
     const {actions} = useAnimations(animations, playerRef);
@@ -53,17 +53,18 @@ const Player = ({isRotating ,playerScale, playerPos, rotation, playerPosition, o
 
         const proximityThreshold = 4; // You may need to adjust this value based on your scene scale
 
-        if (distance1 < proximityThreshold) {
-            setCurrentStage(1);
-        } else if (distance2 < proximityThreshold) {
-            setCurrentStage(2);
-        } else if (distance3 < proximityThreshold) {
-            setCurrentStage(3);
-        } else if(distance4 < proximityThreshold) {
-            setCurrentStage(4);
-        }
-        else{
-            setCurrentStage(5);
+        if(!isCoolDown){
+            if (distance1 < proximityThreshold) {
+                setCurrentStage(1);
+            } else if (distance2 < proximityThreshold) {
+                setCurrentStage(2);
+            } else if (distance3 < proximityThreshold) {
+                setCurrentStage(3);
+            } else if (distance4 < proximityThreshold) {
+                setCurrentStage(4);
+            } else {
+                setCurrentStage(5);
+            }
         }
 
     });

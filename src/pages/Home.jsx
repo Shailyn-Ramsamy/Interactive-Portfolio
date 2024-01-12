@@ -20,12 +20,11 @@ import "./HomeInfo.css"
 const Home = () => {
 
     const [isRotating, setIsRotating] = useState(false);
-    const [currentStage, setCurrentStage] = useState(1);
+    const [currentStage, setCurrentStage] = useState(null);
     const orbitControlsRef = useRef();
     const prevAzimuthalAngle = useRef(0);
     const [orbitDirection, setOrbitDirection] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
-    const [showMoveButton, setShowMoveButton] = useState(false);
     const [cameraMoved, setCameraMoved] = useState(false);
     const [prevCurrentStage, setPrevCurrentStage] = useState(null); // New state variable
     const [allowOrbitControls, setAllowOrbitControls] = useState(true);
@@ -34,10 +33,12 @@ const Home = () => {
 
     const prevTimerRef = useRef(0);
 
+    const [isCooldown, setIsCooldown] = useState(false);
+
     useEffect(() => {
         let interval;
 
-        if (currentStage === 2) {
+        if (currentStage != 5 && currentStage != null) {
             // If currentStage is 2, increase the timer up to 5000 milliseconds (5 seconds)
             interval = setInterval(() => {
                 setTimer((prevTimer) => {
@@ -46,7 +47,7 @@ const Home = () => {
                     return prevTimer < 2000 ? prevTimer + 100 : prevTimer;
                 });
 
-                if (prevTimerRef.current == 1900) {
+                if (prevTimerRef.current == 1500) {
                     // Execute a function when the timer is close to 5000 milliseconds
                     handleMoveButtonClick();
                 }
@@ -61,10 +62,10 @@ const Home = () => {
     }, [currentStage]);
 
     const infoContentStyles = {
-        1: { top: '50%', left: '70%', transform: 'translate(-50%, -50%)' },
-        2: { top: '50%', left: '30%' },
-        3: { top: '30%', left: '30%' },
-        4: { top: '50%', left: '70%' },
+        1: { top: '0%', right: '46%' },
+        2: { top: '0%', left: '0%' },
+        3: { top: '0%', left: '0%' },
+        4: { top: '0%', left: '54%'},
         // Add more styles for other stages as needed
     };
 
@@ -111,25 +112,35 @@ const Home = () => {
             updateOrbitControlsTarget(newTarget);
         }
     };
-
     const handleMoveButtonClick = () => {
         // Trigger camera movement or any other actions you need
         setAllowOrbitControls(false);
         updateTargetForStage(currentStage);
         setPrevCurrentStage(currentStage);
         setTimeout(() => {
-            console.log("camba");
             setCameraMoved(true);
 
         }, 1000);
 
     };
 
-    useEffect(() => {
-        // Check if the currentStage is 1 and show the button
-        setShowMoveButton(currentStage != 5);
-    }, [currentStage]);
+    const handleButtonClick = () => {
+        if (!isCooldown) {
+            // Trigger camera movement or any other actions you need
+            setAllowOrbitControls(true);
+            updateOrbitControlsTarget(new THREE.Vector3(0, 0, 0)); // Set the target to 0,0,0
+            setCameraMoved(false);
+            setCurrentStage(5);
 
+            // Set cooldown to true to prevent further stage changes
+            setIsCooldown(true);
+
+            // Reset cooldown after 10 seconds
+            setTimeout(() => {
+                setIsCooldown(false);
+            }, 2000);
+        }
+    };
 
     const adjustIslandForScreen = () => {
         let screenScale = null;
@@ -168,15 +179,12 @@ const Home = () => {
         if (orbitControlsRef.current){
             console.log("current pos:", orbitControlsRef.current.target)
         }
-
     }, [currentStage]);
-
 
     const [islandScale, islandPos, rot] = adjustIslandForScreen();
     const [playerScale, playerPos] = adjustPlayerForScreen();
     const [playerPosition, setPlayerPosition] = useState([0, 1, 0]);
     const [playerRotation, setPlayerRotation] = useState([0,0,0]);
-
 
     return(
         <section className="w-full h-screen relative" >
@@ -187,13 +195,13 @@ const Home = () => {
                         style={{
                             userSelect: 'none',
                             ...infoContentStyles[prevCurrentStage], // Apply style based on currentStage
+                            background: "#383C5C"
                         }}
                     >
-                        {currentStage && <HomeInfo currentStage={prevCurrentStage} />}
+                        {currentStage && <HomeInfo currentStage={prevCurrentStage} onClickButton={handleButtonClick} />}
                     </div>
                 )}
             </div>
-
             <Canvas
                 className={`w-full h-screen bg-transparent
                 ${isRotating ? 'cursor-grabbing' : 'cursor-grab'}`}
@@ -217,6 +225,7 @@ const Home = () => {
                         position={islandPos}
                         scale={islandScale}
                         rotation={rot}
+                        isCoolDown={isCooldown}
                         currentStage={currentStage}
                         setCurrentStage={setCurrentStage}
                     />
@@ -224,6 +233,7 @@ const Home = () => {
                         isRotating={isRotating}
                         playerScale={playerScale}
                         playerPos={playerPos}
+                        isCoolDown={isCooldown}
                         rotation={playerRotation}
                         playerPosition={playerPosition}
                         orbitDirection={orbitDirection}
