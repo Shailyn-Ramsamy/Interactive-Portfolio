@@ -9,6 +9,7 @@ import Player from "../models/Player.jsx"
 import {OrbitControls} from '@react-three/drei'
 import HomeInfo from "../components/HomeInfo.jsx"
 import Goose from "../models/Goose.jsx"
+import Car from "../models/Car.jsx"
 import Space_Boi from "../models/space_boi.jsx"
 import Tanuki from "../models/Tanuki.jsx"
 import Birds from "../models/Birds.jsx"
@@ -16,6 +17,36 @@ import * as THREE from 'three';
 import "./HomeInfo.css"
 // import skyTexture from
 
+
+const CustomOrbitControls = ({ allowZoom, ...props }) => {
+    const controlsRef = useRef();
+
+    useEffect(() => {
+        const handleWheel = (event) => {
+            if (!allowZoom || !event.ctrlKey) {
+                // Allow regular web page zooming
+                return;
+            }
+
+            // Manually handle zooming for OrbitControls
+            event.preventDefault();
+
+            const delta = event.deltaY / 100;
+            const newZoom = controlsRef.current.zoom + delta;
+
+            controlsRef.current.zoom = THREE.MathUtils.clamp(newZoom, 0.5, 3); // Adjust the min and max zoom levels as needed
+            controlsRef.current.update();
+        };
+
+        window.addEventListener('wheel', handleWheel, { passive: false });
+
+        return () => {
+            window.removeEventListener('wheel', handleWheel);
+        };
+    }, [allowZoom]);
+
+    return <OrbitControls {...props} ref={controlsRef} />;
+};
 
 const Home = () => {
 
@@ -62,11 +93,10 @@ const Home = () => {
     }, [currentStage]);
 
     const infoContentStyles = {
-        1: { top: '0%', right: '46%' },
-        2: { top: '0%', left: '0%' },
-        3: { top: '0%', left: '0%' },
-        4: { top: '0%', left: '54%'},
-        // Add more styles for other stages as needed
+        1: { top: '45%', right: '40%', transform: "translate(-50%, -50%)" },
+        2: { top: '45%', left: '10%', transform: "translate(-50%, -50%)" },
+        3: { top: '45%', left: '10%', transform: "translate(-50%, -50%)" },
+        4: {  top: '45%', right: '40%', transform: "translate(-50%, -50%)"},
     };
 
     const updateOrbitControlsTarget = (target) => {
@@ -76,7 +106,7 @@ const Home = () => {
             let distance = initialDistance;
 
             const dampingFactor = 0.98; // Adjust the damping factor based on your preference
-            const minDistance = 0.1; // Minimum distance to consider the animation complete
+            const minDistance = 0.07; // Minimum distance to consider the animation complete
 
             const animate = () => {
                 const diff = new THREE.Vector3().subVectors(target, currentTarget);
@@ -138,7 +168,7 @@ const Home = () => {
             // Reset cooldown after 10 seconds
             setTimeout(() => {
                 setIsCooldown(false);
-            }, 2000);
+            }, 3000);
         }
     };
 
@@ -181,6 +211,8 @@ const Home = () => {
         }
     }, [currentStage]);
 
+
+
     const [islandScale, islandPos, rot] = adjustIslandForScreen();
     const [playerScale, playerPos] = adjustPlayerForScreen();
     const [playerPosition, setPlayerPosition] = useState([0, 1, 0]);
@@ -216,7 +248,8 @@ const Home = () => {
                     <hemisphereLight skyColor="#b1e1ff" groundColor="#000000" intensity={0}/>
 
                     {/*<Tanuki/>*/}
-                    {/*<Goose />*/}
+                    <Goose />
+                    <Car />
                     <Space_Boi/>
                     {/*<Birds position={[0,7,0]} />*/}
                     {/*<Sky/>*/}
@@ -243,11 +276,13 @@ const Home = () => {
                     />
                 </Suspense>
                 <OrbitControls
+
                     ref={(controls) => (orbitControlsRef.current = controls)}
                     target={[islandPos[0],islandPos[1],islandPos[2]]}
                     minDistance={25}  // Set your desired minimum distance
                     maxDistance={60}
                     enabled={allowOrbitControls}
+                    enablePan={false}
                     onStart={() => setIsRotating(true)}
                     onEnd={() => setIsRotating(false)}
                 />

@@ -40,7 +40,7 @@ const Player = ({isRotating ,playerScale, playerPos, rotation, playerPosition, o
         // Make the player look at the sphere's position
         playerRef.current.lookAt(spherePosition);
 
-        const targetCoordinates1 = new THREE.Vector3(-9.18485099360515e-16, 0.1500000000000009, 15);
+        const targetCoordinates1 = new THREE.Vector3(-9.18485099360515e-16, -0.6500000000000009, 15);
         const targetCoordinates2 = new THREE.Vector3(14.96910857771835, -0.4625591781512517, -0.7419970631623536);
         const targetCoordinates3 = new THREE.Vector3(-2.640654651304165, 7.921745140043082, -12.554956013095483);
         const targetCoordinates4 = new THREE.Vector3(-0.839322795887166, -7.473520451661315, -12.89098418148924);

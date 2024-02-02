@@ -462,7 +462,7 @@ const Island = ({isRotating, setIsRotating, islandPos, currentStage,...props}) =
                     receiveShadow
                     geometry={nodes.Plane027.geometry}
                     material={materials["Material.004"]}
-                    position={[-0.017, 0.025, -1.092]}
+                    position={[-0.03, 0.089, -1.082]}
                     rotation={[1.973, 1.09, -0.342]}
                     scale={-0.056}
                 />
@@ -682,7 +682,7 @@ const Island = ({isRotating, setIsRotating, islandPos, currentStage,...props}) =
                     receiveShadow
                     geometry={nodes.Plane050.geometry}
                     material={materials["Material.005"]}
-                    position={[-0.154, -0.517, 0.947]}
+                    position={[-0.076, -0.52, 0.955]}
                     rotation={[2.292, -0.624, 0.206]}
                     scale={[-0.064, -0.046, -0.046]}
                 />
@@ -862,7 +862,7 @@ const Island = ({isRotating, setIsRotating, islandPos, currentStage,...props}) =
                     receiveShadow
                     geometry={nodes.Plane068.geometry}
                     material={materials["Material.005"]}
-                    position={[1.088, -0.047, -0.033]}
+                    position={[1.088, 0.01, -0.01]}
                     rotation={[-0.155, 0.166, -1.641]}
                     scale={[-0.052, -0.037, -0.037]}
                 />
@@ -872,7 +872,7 @@ const Island = ({isRotating, setIsRotating, islandPos, currentStage,...props}) =
                     receiveShadow
                     geometry={nodes.Plane069.geometry}
                     material={materials["Material.005"]}
-                    position={[-0.033, -0.218, -1.059]}
+                    position={[0.003, -0.006, -1.117]}
                     rotation={[-1.696, -1.51, -3.093]}
                     scale={[0.034, 0.024, 0.024]}
                 />
@@ -892,7 +892,7 @@ const Island = ({isRotating, setIsRotating, islandPos, currentStage,...props}) =
                     receiveShadow
                     geometry={nodes.Plane071.geometry}
                     material={materials["Material.005"]}
-                    position={[-0.172, 0.919, -0.491]}
+                    position={[-0.168, 0.943, -0.458]}
                     rotation={[2.774, 0.923, -0.321]}
                     scale={[0.037, 0.026, 0.026]}
                 />
@@ -1112,7 +1112,7 @@ const Island = ({isRotating, setIsRotating, islandPos, currentStage,...props}) =
                     castShadow
                     receiveShadow
                     geometry={nodes.Icosphere009.geometry}
-                    material={materials["Material.018"]}
+                    material={materials["Material.014"]}
                     position={[-0.032, -0.552, 0.966]}
                     rotation={[-1.22, -1.49, -1.738]}
                     scale={0.814}
@@ -1122,7 +1122,7 @@ const Island = ({isRotating, setIsRotating, islandPos, currentStage,...props}) =
                     castShadow
                     receiveShadow
                     geometry={nodes.Icosphere010.geometry}
-                    material={materials["Material.020"]}
+                    material={materials["Material.014"]}
                     position={[-0.147, 0.955, -0.456]}
                     rotation={[-2.967, 1.154, -2.249]}
                     scale={0.814}
