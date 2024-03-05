@@ -15,6 +15,13 @@ import Tanuki from "../models/Tanuki.jsx"
 import Birds from "../models/Birds.jsx"
 import * as THREE from 'three';
 import "./HomeInfo.css"
+import { motion } from 'framer-motion';
+import { CloseButton } from '@chakra-ui/react'
+import { IoClose } from "react-icons/io5";
+import OverlayContent1 from "./Info/OverlayContent1.jsx"
+import OverlayContent2 from "./Info/OverlayContent2.jsx"
+import OverlayContent3 from "./Info/OverlayContent3.jsx"
+import OverlayContent4 from "./Info/OverlayContent4.jsx"
 // import skyTexture from
 
 
@@ -155,6 +162,11 @@ const Home = () => {
     };
 
     const handleButtonClick = () => {
+        console.log("yey")
+        setIsVisible1(false);
+        setIsVisible2(false);
+        setIsVisible3(false);
+        setIsVisible4(false);
         if (!isCooldown) {
             // Trigger camera movement or any other actions you need
             setAllowOrbitControls(true);
@@ -178,7 +190,7 @@ const Home = () => {
         let rot = [-0.53,0.05,0];
 
         if(window.innerWidth < 768) {
-            screenScale = [0.9,0.9,0.9];
+            screenScale = [8,8,8];
         }
         else{
             screenScale = [9,9,9];
@@ -193,8 +205,8 @@ const Home = () => {
         let rot = [0,1.6,0];
 
         if(window.innerWidth < 768) {
-            screenScale = [0.5, 0.5, 0.5];
-            screenPos = [0,-1.5,0];
+            screenScale = [0.3, 0.3, 0.3];
+            screenPos = [0, 0.15, -2];
         }
         else{
             screenScale = [0.3,0.3,0.3];
@@ -217,6 +229,26 @@ const Home = () => {
     const [playerScale, playerPos] = adjustPlayerForScreen();
     const [playerPosition, setPlayerPosition] = useState([0, 1, 0]);
     const [playerRotation, setPlayerRotation] = useState([0,0,0]);
+    const [isVisible1, setIsVisible1] = useState(false);
+    const [isVisible2, setIsVisible2] = useState(false);
+    const [isVisible3, setIsVisible3] = useState(false);
+    const [isVisible4, setIsVisible4] = useState(false);
+
+
+
+
+    const handleButtonClick1 = () => {
+        setIsVisible1(!isVisible1);
+    };
+    const handleButtonClick2 = () => {
+        setIsVisible2(!isVisible2);
+    };
+    const handleButtonClick3 = () => {
+        setIsVisible3(!isVisible3);
+    };
+    const handleButtonClick4 = () => {
+        setIsVisible4(!isVisible4);
+    };
 
     return(
         <section className="w-full h-screen relative" >
@@ -230,10 +262,11 @@ const Home = () => {
                             background: "#383C5C"
                         }}
                     >
-                        {currentStage && <HomeInfo currentStage={prevCurrentStage} onClickButton={handleButtonClick} />}
+                        {currentStage && <HomeInfo currentStage={prevCurrentStage} onClickButton={handleButtonClick } onClickButton1={handleButtonClick1} onClickButton2={handleButtonClick2} onClickButton3={handleButtonClick3} onClickButton4={handleButtonClick4} />}
                     </div>
                 )}
             </div>
+
             <Canvas
                 className={`w-full h-screen bg-transparent
                 ${isRotating ? 'cursor-grabbing' : 'cursor-grab'}`}
@@ -280,13 +313,20 @@ const Home = () => {
                     ref={(controls) => (orbitControlsRef.current = controls)}
                     target={[islandPos[0],islandPos[1],islandPos[2]]}
                     minDistance={25}  // Set your desired minimum distance
-                    maxDistance={60}
+                    maxDistance={35}
                     enabled={allowOrbitControls}
                     enablePan={false}
                     onStart={() => setIsRotating(true)}
                     onEnd={() => setIsRotating(false)}
                 />
             </Canvas>
+
+            {isVisible1 && <OverlayContent1 handleButtonClick={handleButtonClick} />}
+            {isVisible2 && <OverlayContent2 handleButtonClick={handleButtonClick} />}
+            {isVisible3 && <OverlayContent3 handleButtonClick={handleButtonClick} />}
+            {isVisible4 && <OverlayContent4 handleButtonClick={handleButtonClick} />}
+
+
         </section>
 
     )
